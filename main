@@ -1,0 +1,264 @@
+#include<iostream>
+#include<string>
+#include<limits>
+using namespace std ;
+
+
+int numOfItems;
+
+class item{
+    private:
+        int itemNum, numOfBids=0;
+        string desc; //"desc" for "description"
+        double reservePrice, currentHighestBid = 0.0, finalBid = 0.0, companyFee, totalFee = 0.0;
+        bool sold = false;
+        
+    
+    public:
+        void setter(){
+            
+            cout<<"\nEnter the item number: ";
+        while(true){
+            cin>>itemNum;
+            if(cin.fail()){
+        
+            cout<<"Error! You've entered an invalid item number.\n";
+            //Clear the input buffer
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize> :: max(), '\n');
+            cout<<"Again enter the valid item number:";
+        } 
+        else{ break; }
+        }
+            cout<<"Description of the item: ";
+            cin.ignore();
+            getline(cin, desc);
+            
+                cout<<"Enter reserve price: ";
+            do{
+                cin>>reservePrice;
+            
+                if(reservePrice < 0){
+                cout<<"\nError: Reserve price you have entered is negative but it shouldn't be. Again enter the valid reserve price.\n";
+                }
+            }while(reservePrice < 0);
+        
+        }    
+        
+        void getter(){
+        
+            cout<<"Item number: "<<itemNum<<endl;
+            cout<<"Description: "<<desc<<endl;
+            cout<<"Current Highest Bid"<<currentHighestBid<<endl;
+        }
+        
+        void placeBid(int buyerNumber){
+        
+            int itemNumber;
+            double bidAmount;
+            
+            cout<<"Enter the item number:";
+            while(true){
+            
+                cin>>itemNumber;
+                if(cin.fail()){
+        
+                    cout<<"Error! You've entered an invalid item number.\n";
+                    //Clear the input buffer
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize> :: max(), '\n');
+                    cout<<"Again enter the valid item number:";
+                } 
+                else if(itemNumber < 0 || itemNumber > numOfItems){
+                
+                    cout<<"\nError! You should enter the item number which is greater than zero amd is less than or equal to number of items.\n";
+                }
+                else if(itemNum == itemNumber){
+                
+                    break;
+                }
+                else{
+                
+                    cout<<"\nError! You should enter an item number which should match any item number in the list of items.\n";
+                }
+            
+            }
+            
+            //Getting bid amount 
+            cout<<"\nEnter your bid amount:";
+            while(true){
+            
+                cin>>bidAmount;
+                if(cin.fail()){
+        
+                    cout<<"Error! You've entered an invalid bid amount.\n";
+                    //Clear the input buffer
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize> :: max(), '\n');
+                    cout<<"Again enter the valid bid amount:";
+                }
+                else{ break;}
+            }
+            //Validating the bid amount 
+            if(bidAmount > currentHighestBid){
+                
+                currentHighestBid = bidAmount;
+                numOfBids++;
+            }
+            else{
+                
+                cout<<"\nThe bid amount you've entered is less than current highest bid. You should enter a bid greater than current highest bid, then your bid will be considered.\n";
+            }
+        }
+        
+        //Status checker method
+        void statusCheck(){
+            if(currentHighestBid >= reservePrice){
+                sold = true;
+                finalBid = currentHighestBid;
+                companyFee = 0.1 * finalBid;
+                totalFee += finalBid + companyFee;
+            }
+        }
+        //Function for Displaying Total fee 
+        double getTotalFee(){
+            if(sold){
+                return totalFee;
+            }
+        }
+        //function for Information about items sold 
+        void infoItemsSold(){
+            if(sold){
+                cout<<"Item number: "<<itemNum<<"\nFinal bid: "<<finalBid<<endl;
+            }
+        }
+        //Function for Displaying information about items that did not meet the reserve price.
+        void infoItemsUnsold(){
+            if(!sold){
+                cout<<"Item number: "<<itemNum<<"\nFinal bid: "<<finalBid<<endl;
+            }
+        }
+        //Displaying information about items with no bids.
+        void infoItemsNobids(){
+            if(numOfBids == 0){
+                cout<<"Item number: "<<itemNum<<"\nFinal bid: "<<finalBid<<endl;
+            }
+        }
+        
+};
+
+
+int main(){
+
+    int buyerNum, serialNum;
+    cout<<"How many items will there in the auction.\nNote! There must be at least 10 items in the auction.\n";
+    
+    while(true){
+    
+        cin>>numOfItems;
+        
+        if(cin.fail()){
+            //clear the input buffer
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize> :: max(), '\n');
+            cout<<"Error! The value you entered isn't an integer. You should add some integer value.\n";
+            
+        } else if(numOfItems < 10){
+        
+            cout<<"\nError! The number of items you entered is less than 10. They must be at least 10.\n";
+        } else {
+        
+            break;
+        }
+    };
+    
+    item *itemsArray = new item[numOfItems];
+    
+    //Adding information of items 
+    for(int i=0; i<numOfItems; i++){
+    
+        cout<<"\nEnter information of item"<<i+1<<":\n";
+        itemsArray[i].setter();
+    }
+
+    //Displaying information of items 
+    for(int i=0; i<numOfItems; i++){
+    
+        cout<<"\nInformation of item"<<i+1<<":\n";
+        itemsArray[i].getter();
+    }
+
+    //Placing the bid
+        //Getting buyer number
+    char choice;
+    do{
+        cout<<"Now you can bid for any item.\n\nEnter your unique buyer number: ";
+        
+        while(true){
+        
+            cin>>buyerNum;
+            if(cin.fail()){
+            
+                cout<<"Error! You've entered an invalid buyer number.\n";
+                //Clear the input buffer
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize> :: max(), '\n');
+                cout<<"Again enter the valid buyer number:";
+            } 
+            else{ break; }
+        }
+            //Getting serial number of item for which bidding will be done.
+        cout<<"\nEnter the serial number of the item you wanted to bid for:\n";
+        while(true){
+            cin>>serialNum;
+            if(cin.fail()){
+            
+                cout<<"Error! You've entered an invalid serial number.\n";
+                //Clear the input buffer
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize> :: max(), '\n');
+                cout<<"Again enter the valid serial number:";
+            }
+            else if(serialNum <= numOfItems && serialNum > 0){
+                   
+                itemsArray[serialNum - 1].placeBid(buyerNum);
+                break; }
+                
+            else {
+                cout<<"Error! You should enter a serial number greater than zero and less than or equal to number of items.\n";
+            }    
+        }
+    cout<<"\nDo you want to add another bid? (Y/N):";
+    cin>>choice;
+    }while(choice == 'Y' || choice == 'y');
+
+    //Status checking 
+    for(int i=0; i<numOfItems; i++){
+        itemsArray[i].statusCheck();
+    }
+    //Displaying Total Fee
+    for(int i=0; i<numOfItems; i++){
+        cout<<"Total fee for item "<<i+1<<"is "<<itemsArray[i].getTotalFee()<<endl;
+    }
+    // Information about items sold 
+    cout<<"\nInformation about items sold:\n";
+    for(int i=0; i<numOfItems; i++){
+        cout<<"Information of item "<< i+1<<":\n";
+        itemsArray[i].infoItemsSold();
+    }
+    //Displaying information about items that did not meet the reserve price.
+    cout<<"\nInformation about items that did not meet the reserve price:\n";
+    for(int i=0; i<numOfItems; i++){
+        cout<<"Information of item "<< i+1<<":\n";
+        itemsArray[i].infoItemsUnsold();
+    }
+    //Displaying information about items with no bids.
+    cout<<"\nInformation about items with no bids:\n";
+    for(int i=0; i<numOfItems; i++){
+        cout<<"Information of item "<< i+1<<":\n";
+        itemsArray[i].infoItemsNobids();
+    }
+
+    delete [] itemsArray;
+    return 0;
+}
